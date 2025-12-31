@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おみくじ結果 - 2026</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --deep-red: #8e0000;
+            --bright-red: #c0392b;
+            --black: #2c3e50;
+            --white: #ffffff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #fcfaf2;
+            font-family: "Yu Mincho", "MS PMincho", serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-card {
+            background: white;
+            padding: 50px 30px;
+            border: 2px solid var(--gold);
+            outline: 6px double var(--gold);
+            outline-offset: -12px;
+            text-align: center;
+            max-width: 450px;
+            width: 85%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            /* アニメーション */
+            animation: slideIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .fortune-title {
+            font-size: 1.1rem;
+            color: #666;
+            letter-spacing: 0.2em;
+            margin-bottom: 5px;
+        }
+
+        #fortune-rank {
+            font-size: 4.5rem;
+            margin: 15px 0;
+            font-weight: bold;
+            display: block;
+            min-height: 1.2em; /* 空白防止 */
+        }
+
+        .color-pos { color: var(--bright-red); }
+        .color-mid { color: var(--deep-red); }
+        .color-neg { color: var(--black); }
+
+        .decoration-diamond {
+            font-size: 0.8rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        #fortune-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+            margin: 20px 0 40px;
+            padding: 20px 10px 0;
+            border-top: 1px solid #eee;
+            min-height: 5em; /* 空白防止 */
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid var(--gold);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: var(--gold);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="result-card">
+    <div class="fortune-title">二〇二六年度 運勢</div>
+    <div id="fortune-rank"></div>
+    <div class="decoration-diamond">◆ ◇ ◆</div>
+    <p id="fortune-text"></p>
+    <a href="index.html" class="back-btn">トップに戻る</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 設定データ ---
+        const ranks = [
+            { name: "大大吉", type: "daidaikichi", class: "color-daidaikichi" },
+            { name: "大吉", type: "pos", class: "color-pos" },
+            { name: "吉", type: "pos", class: "color-pos" },
+            { name: "中吉", type: "pos", class: "color-pos" },
+            { name: "小吉", type: "mid", class: "color-mid" },
+            { name: "末吉", type: "mid", class: "color-mid" },
+            { name: "凶", type: "neg", class: "color-neg" },
+            { name: "大凶", type: "neg", class: "color-neg" }
+        ];
+
+        const messageBank = {
+            daidaikichi: [
+                "宇宙が味方しています。あなたが願うことは全て現実になる、伝説級の一年です。",
+                "全ステータスがカンスト状態。何をやっても成功しかしないので、一番大きな夢に挑んで。",
+                "宝くじ、懸賞、オーディション。全ての「当選」を引き寄せる最強の波動が出ています。",
+                "歴史に名が残るレベルの幸運。あなたの存在自体が周りの運気まで爆上げします。",
+                "神がかり的な直感。あなたが選んだ道が、そのまま黄金のロードになります。",
+                "生涯忘れることのない、劇的な幸せが舞い込みます。心の準備をしておいて。",
+                "努力ゼロでも報われるような、奇跡的な展開が連続します。思う存分甘受して。",
+                "異次元の金運。お金の悩みとは無縁の生活が始まります。自己投資に全振りして吉。",
+                "SNSのフォロワーが激増したり、憧れの人からアプローチされたり、人生の主役確定です。",
+                "無敵。あなたの前に敵はいません。やりたかったこと、全て今日から始めてください。",
+                "圧倒的なカリスマ性が備わります。あなたの言葉一つで世界が動くような感覚に。",
+                "全てのタイミングが完璧に噛み合います。信号は常に青、電車は常に座れる、そんな一年。",
+                "推しの最前列当選どころか、推し本人と仕事ができるレベルの強運です。",
+                "眠っていた才能が爆発。天才として覚醒し、周囲を驚かせる成果を出すでしょう。",
+                "一生モノの富と名声、そして最高のパートナーを手に入れる準備が整いました。",
+                "運勢のインフレ。普通ならありえないような幸運が「普通」に起き続けます。",
+                "あなたの笑顔が100万ボルトの価値を持つ年。ただ笑っているだけで全てが上手くいく。",
+                "不可能を可能にする力。無理だと言われていたプロジェクトを完遂し、英雄に。",
+                "今のあなたにできないことはありません。2026年はあなたのためのステージです。",
+                "天界からの全面バックアップ。目に見えない力が、あなたを最高の場所へ運びます。",
+                "もはやおみくじを引く必要すらないレベル。あなたの思う通りに世界が書き換わります。",
+                "運気が良すぎて怖いくらいですが、遠慮は無用。全てを受け取る資格があります。",
+                "これまでの人生の苦労が1万倍の幸せになって返ってきます。おめでとうございます。",
+                "自分史上最高のコンディション。24時間365日、エネルギーが枯渇することはありません。",
+                "あなたが歩く場所すべてがパワースポットになります。歩くだけで幸せを撒き散らす存在。",
+                "「選ばれし者」の運勢。歴史の転換点に立ち、大きな影響力を発揮するでしょう。",
+                "理想の未来が、向こうから全力で走ってやってきます。両手を広げて受け止めて。",
+                "勝負事は全戦全勝。じゃんけんから試験まで、負けることを忘れる一年です。",
+                "オーラが輝きすぎて、すれ違う人が振り返るレベル。あなたの時代が始まりました。",
+                "最高・最強・最大。これ以上の言葉が見つからないほどの祝福があなたに降り注ぎます。"
+            ],
+            daikyo: [
+                "今はどん底ですが、これ以上落ちることはありません。あとは上がるだけの超・上昇気流。",
+                "スマホを落とす、充電がない。そんな些細な不運を今、全部使い切りました。安心を。",
+                "今は「無」の境地。新しいことを始めるより、ひたすら寝てパワーを溜めるのが正解。",
+                "周囲の雑音がうるさい時は、イヤホンで推しの声を聴いて遮断して。自分を守る年。",
+                "デジタルデトックスの神様がついています。スマホを置いて、現実逃避を楽しみましょう。",
+                "「全部他人のせい」にしていい時期です。自分を責めず、美味しいものを食べて寝るだけ。",
+                "予定は全部キャンセルしてOK。家でダラダラすることが、最大の開運アクションです。",
+                "今は我慢。でも、この大凶を引いたこと自体が「厄落とし」完了のサインです。",
+                "他人のSNSを見ないで。あなたはあなた、他人は他人。自分の殻にこもる勇気を。",
+                "無理して笑わなくていい。今は心の冬休みです。春が来るまでじっと暖を取りましょう。",
+                "お気に入りのぬいぐるみに話しかけて。心が軽くなるまで、外の世界とは距離を置いて。",
+                "落とし物に注意。でも、何かを失くした分、もっと大切なものが心の中に生まれます。",
+                "言葉が鋭くなりやすい時期。SNSの投稿は一度下書きに入れて、一晩寝かせてから。",
+                "人間関係のリセットボタンを押したくなるかも。無理に繋ぎ止めなくて大丈夫です。",
+                "勉強も仕事も身が入らない？それは脳が「休め」と言っている証拠。サボりは正義。",
+                "鏡に向かって「今日も生きてて偉い」と言ってあげて。それだけで今日のノルマ達成。",
+                "今は真っ暗なトンネルの中。でも、出口は確実に近づいています。一歩ずつ、ゆっくり。",
+                "買い出しはコンビニで十分。自炊なんてしなくていい。自分に一番優しくする一年に。",
+                "「あー、大凶引いたわ（笑）」とネタにする強さを。笑いに変えた瞬間、運気は反転します。",
+                "今は透明人間になったつもりで。目立たず、騒がず、静かに自分の好きなことだけして。",
+                "不運を全部この紙に吸い取らせました。ここから先は、もうラッキーしか起きません。",
+                "あなたの優しさが利用されやすい時。嫌なことは「NO」とはっきり言っていいんです。",
+                "体調が優れない時は即、病院か布団へ。自分の体調を最優先にする贅沢な一年に。",
+                "推し活の資金がピンチかも。でも、現場に行けない分、在宅でじっくり愛を深める時。",
+                "部屋が荒れても気にしない。心が整理されたら、自然と片付けたくなる日が来ます。",
+                "今は「待ち」の姿勢。焦って動くと裏目に出るから、ひたすら好きな映画を観て過ごして。",
+                "他人からの評価が気になる時は、通知をオフに。あなたの価値は他人が決めるものではない。",
+                "過去の嫌な思い出がフラッシュバックするかも。それは心が浄化されているプロセスです。",
+                "運気がマイナスを振り切りました。数学と同じで、マイナスとマイナスが掛かればプラスです。",
+                "おめでとうございます。最悪を経験したあなたは、もう何が起きても怖くありません。"
+            ],
+            pos: [
+                "全方位から無双できる年！やりたいことは全部欲張ってみて。最高の1年になります。",
+                "努力が報われて、単位も評価も爆上がり。自信を持って突き進んでOK！",
+                "理想の自分に近づけるチャンス。自分磨きへの投資は惜しまないで。QOLが爆増します。",
+                "SNSでバズったり、意外な人からDMが来たり。ネットから始まる良い縁がありそう。",
+                "推し運が最強！ライブの当選やファンサなど、嬉しい出来事が連発する予感。",
+                "就活や試験、バイトなど「ここぞ」という場面で120%の力を発揮できます。",
+                "人脈が広がる年。尊敬できる先輩や、一生モノの友達に出会えるかも。",
+                "金運が絶好調。欲しかったあのアイテムをゲットして、モチベを上げよう！",
+                "直感を信じて行動すれば、全てが良い方向に転がります。フットワーク軽くね。",
+                "とにかく「運が良い」と感じることが多い年。感謝を伝えるとさらに運気がUP！"
+            ],
+            mid: [
+                "大きな変化はないけれど、穏やかで充実した日常。無理せず自分のペースでいこう。",
+                "資格の勉強やスキルアップなど、地道な努力が後半に効いてきます。今はコツコツ派で。",
+                "「とりあえずやってみる」精神が大事。意外な適性が見つかって、将来の選択肢が増えるかも。",
+                "生活リズムを整えると、集中力がアップ。自炊や睡眠にこだわってみて。",
+                "昔の友達に連絡してみると、良い刺激をもらえそう。懐かしい場所に出かけるのも吉。",
+                "SNSの使いすぎには注意が必要。デジタルデトックスをすると、新しいアイディアが湧くよ。",
+                "急がば回れ。焦って答えを出さず、今は情報収集に専念するのが賢い選択です。",
+                "部屋の模様替えをすると運気が安定。お気に入りの空間を作ってリラックスして。",
+                "小さなラッキーを見逃さないで。コンビニの新商品が美味しかったり、偶然席が空いたり。",
+                "周囲との協力が成功の鍵。一人で抱え込まず、友達や先輩を頼ってみるのもアリです。"
+            ],
+            neg: [
+                "ちょっと疲れが溜まってるかも。無理に予定を詰め込まず、一人の時間を大切にして。",
+                "スマホの画面割れや紛失に注意。大事なデータは今のうちにバックアップしておこう。",
+                "人間関係で空回りしがち。深呼吸して、SNSの投稿前には一度読み返す冷静さを忘れずに。",
+                "衝動買いに注意が必要。本当に必要なものか、一晩寝てから考えると失敗しません。",
+                "単位や期限の確認は念入りに。「大丈夫だろう」という過信はちょっと危ないかも。",
+                "他人のキラキラした投稿と自分を比べすぎないで。あなたはあなたのままで大丈夫。",
+                "今は自分を甘やかす時期。好きなものを食べて、早めに寝てエネルギーを回復させよう。",
+                "言葉のすれ違いが起きやすい時。大事な話は、テキストよりも直接会うか通話で伝えて。",
+                "忘れ物に注意。出かける前にカバンの中身をダブルチェックする習慣をつけてみて。",
+                "今は低空飛行でも、この経験が後で大きな成長に繋がります。焦らず冬を越そう。"
+            ]
+        };
+
+        // --- ロジック部分 ---
+        const rankDisplay = document.getElementById('fortune-rank');
+        const textDisplay = document.getElementById('fortune-text');
+
+        // 1. 保存された結果があるか確認
+        let savedResult = localStorage.getItem('omikuji_result_2026');
+        let finalResult;
+
+        if (false) {
+            // 保存済みならそれを解析して使う
+            finalResult = JSON.parse(savedResult);
+        } else {
+            // --- 確率操作ロジック ---
+            let selectedRank;
+            const randomNum = Math.random() * 100; // 0〜100の乱数
+
+            if (randomNum <= 1) { 
+                // 1%の確率で大大吉
+                selectedRank = ranks.find(r => r.name === "大大吉");
+            } else if (randomNum <= 6) { 
+                // 次に5%の確率（1%〜6%の間）で大凶
+                selectedRank = ranks.find(r => r.name === "大凶");
+            } else {
+                // 残り94%の確率で、大大吉と大凶以外のランクからランダム抽選
+                const normalRanks = ranks.filter(r => r.name !== "大大吉" && r.name !== "大凶");
+                selectedRank = normalRanks[Math.floor(Math.random() * normalRanks.length)];
+            }
+            // ------------------------
+
+            const groupMessages = messageBank[selectedRank.type];
+            const selectedMessage = groupMessages[Math.floor(Math.random() * groupMessages.length)];
+
+            finalResult = {
+                name: selectedRank.name,
+                className: selectedRank.class,
+                text: selectedMessage
+            };
+            localStorage.setItem('omikuji_result_2026', JSON.stringify(finalResult));
+        }
+
+        // 3. 画面に表示
+        if (rankDisplay && textDisplay) {
+            rankDisplay.innerText = finalResult.name;
+            rankDisplay.className = finalResult.className;
+            textDisplay.innerText = finalResult.text;
+        }
+    });
+</script>
+</body>
+</html>
