@@ -255,23 +255,37 @@
         let selectedRank;
         const randomNum = Math.random() * 100;
 
-        if (randomNum <= 1) { 
-            selectedRank = ranks.find(r => r.name === "大大吉");
-        } else if (randomNum <= 6) { 
-            selectedRank = ranks.find(r => r.name === "大凶");
+        if (savedResult) {
+            // 保存済みならそれを解析して使う
+            finalResult = JSON.parse(savedResult);
         } else {
-            const normalRanks = ranks.filter(r => r.name !== "大大吉" && r.name !== "大凶");
-            selectedRank = normalRanks[Math.floor(Math.random() * normalRanks.length)];
+            // --- 確率操作ロジック ---
+            let selectedRank;
+            const randomNum = Math.random() * 100; // 0〜100の乱数
+
+            if (randomNum <= 1) { 
+                // 1%の確率で大大吉
+                selectedRank = ranks.find(r => r.name === "大大吉");
+            } else if (randomNum <= 6) { 
+                // 次に5%の確率（1%〜6%の間）で大凶
+                selectedRank = ranks.find(r => r.name === "大凶");
+            } else {
+                // 残り94%の確率で、大大吉と大凶以外のランクからランダム抽選
+                const normalRanks = ranks.filter(r => r.name !== "大大吉" && r.name !== "大凶");
+                selectedRank = normalRanks[Math.floor(Math.random() * normalRanks.length)];
+            }
+            // ------------------------
+
+            const groupMessages = messageBank[selectedRank.type];
+            const selectedMessage = groupMessages[Math.floor(Math.random() * groupMessages.length)];
+
+            finalResult = {
+                name: selectedRank.name,
+                className: selectedRank.class,
+                text: selectedMessage
+            };
+            localStorage.setItem('omikuji_result_2026', JSON.stringify(finalResult));
         }
-
-        const groupMessages = messageBank[selectedRank.type] || messageBank['pos'];
-        const selectedMessage = groupMessages[Math.floor(Math.random() * groupMessages.length)];
-
-        const finalResult = {
-            name: selectedRank.name,
-            className: selectedRank.class,
-            text: selectedMessage
-        };
 
         if (rankDisplay && textDisplay) {
             rankDisplay.innerText = finalResult.name;
@@ -329,5 +343,6 @@
 </script>
 </body>
 </html>
+
 
 
