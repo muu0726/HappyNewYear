@@ -254,8 +254,9 @@
 
         let selectedRank;
         const randomNum = Math.random() * 100;
-
-        if (savedResult) {
+        let savedResult = localStorage.getItem('omikuji_result_2026');
+        let finalResult;
+        if (saveResult) {
             // 保存済みならそれを解析して使う
             finalResult = JSON.parse(savedResult);
         } else {
@@ -343,6 +344,7 @@
 </script>
 </body>
 </html>
+
 
 
 
