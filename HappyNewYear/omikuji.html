@@ -178,7 +178,7 @@
         let selectedRank;
         const randomNum = Math.random() * 100;
 
-        if (true) { 
+        if (randomNum <= 1) { 
             selectedRank = ranks.find(r => r.name === "大大吉");
         } else if (randomNum <= 6) { 
             selectedRank = ranks.find(r => r.name === "大凶");
@@ -257,4 +257,5 @@
 </script>
 </body>
 </html>
+
 
